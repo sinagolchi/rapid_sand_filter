@@ -13,13 +13,13 @@ with tab1:
     st.subheader('Sand bed configuration')
     c1,c2,c3 = st.columns(3)
     area = c1.number_input(label='Base area in [m^2]', value= 0.0079, step=0.0001,format="%.5f")
-    total_length = c2.number_input(label='Total length of bed [m]', value=3)
-    media_l = c2.number_input(label='Media depth at rest [m]', value=1.5)
+    total_length = c2.number_input(label='Total length of bed [m] (overflow position)', value=2.5)
+    media_l = c2.number_input(label='Media depth at rest [m]', value=1.2)
     media_e = c3.number_input(label='Media porosity (0-1)', value= 0.40)
-    media_rho = c3.number_input(label='Media density [kg/m^3]', value=1680)
+    media_rho = c3.number_input(label='Media density [kg/m^3]', value=2650)
     Kv = c2.number_input(label='Kv value for Ergun equation', value=115)
     Ki = c2.number_input(label='KI value for Ergun equation', value=2.5)
-    d = c3.number_input(label='Effective size of media [mm]', value=0.5)
+    d = c3.number_input(label='Effective size of media [mm]', value=0.6)
     temp = c1.number_input(label='Temperature [degree C]', value = 15)
     visc =  c1.number_input(label='Water dynamic viscosity [kg/m.s]',value=1.14E-3,format="%.5f")
     w_rho = c1.number_input(label='Water density [kg/m^3]', value=999)
@@ -126,6 +126,8 @@ with tab4:
     c11.metric('Bed porosity at rest',value=str(np.around(media_e, 3)))
     c12.metric('Expanded bed porosity', value=str(np.around(expanded_e, 3)))
     st.metric('Total expansion', value=str(np.around((expanded_depth-media_l)/media_l *100, 3)) + ' %')
+    if expanded_depth > total_length:
+        st.warning(F'The backwash flow of {Q_fl_lpm} L/min will cause the bed to overflow! ')
 
 with tab5:
     st.subheader('Calculating backwash flow for certain bed expansion')
