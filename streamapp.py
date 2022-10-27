@@ -200,8 +200,20 @@ with tab6:
         h_total += (hl1+hl2+hl3)
         return h_total
 
-    pump = st.selectbox('Pump selection',options=['30Z','55R','70R','70Z'])
-    df_pump = pd.read_csv('Pumps.csv', header=[0,1])
+    custom_curve = st.checkbox('Upload pump curve?')
+
+    if custom_curve:
+        file_csv = st.file_uploader('Upload pump curve data base')
+        if file_csv is not None:
+            df_pump = pd.read_csv(file_csv, header=[0,1])
+            pump = st.selectbox('Pump selection',options=df_pump.columns.levels[0])
+        else:
+            st.info('Upload pump curve database to continue')
+            st.stop()
+    else:
+        pump = st.selectbox('Pump selection',options=['30Z','55R','70R','70Z'])
+        df_pump = pd.read_csv('Pumps.csv', header=[0,1])
+
 
     total_k = fitting_kvalue
 
