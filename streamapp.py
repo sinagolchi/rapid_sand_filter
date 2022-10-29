@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from shapely.geometry import LineString
 
-st.title('Biofilter Calculations')
+st.title('Rapid Sand Filter Calculations')
 st.caption('Developed by Sina Golchi for UW NSERC Chair in Water Treatment, 2022')
 
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(['Setup', 'Clean bed head loss' ,'Fluidization Q', 'Bed expansion by Q', 'Q for bed expansion', 'Pump sizing'])
