@@ -251,7 +251,7 @@ with tab6:
     st.pyplot(fig)
     col1, col2 = st.columns(2)
     col1.metric('Duty point Flow', str(np.around(intersection.x,4)) + ' L/min')
-    col2.metric('Duty point Head', str(np.around(intersection.y,4)) + ' L/min')
+    col2.metric('Duty point Head', str(np.around(intersection.y,4)) + ' m')
 
 
 
