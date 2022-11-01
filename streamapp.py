@@ -224,7 +224,8 @@ with tab6:
 
     pump_curve = LineString(np.column_stack((pumpx, pumpy)))
     system_curve = LineString(np.column_stack((sys_x, sys_y)))
-    intersection = pump_curve.intersection(system_curve)
+
+
 
     #%% calculation for bed expansion
 
@@ -233,7 +234,14 @@ with tab6:
     fig , ax = plt.subplots()
     ax.plot(sys_x, sys_y, label='System curve')
     ax.plot(pumpx,pumpy,label='Pump curve')
-    ax.scatter(*intersection.xy,label='Duty point',color='orange',zorder=11)
+
+    try:
+        intersection = pump_curve.intersection(system_curve)
+        ax.scatter(*intersection.xy, label='Duty point', color='orange', zorder=11)
+    except:
+        pass
+
+
     ax.set_xlim(left=0)
     ax.set_ylim(0,25)
     for expansion in [0, 20, 40, 60, 80, 100]:
