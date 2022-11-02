@@ -177,7 +177,6 @@ with tab6:
 
         if use_darcy:
             reynolds_pipe = (w_rho*v_pipe*(pipe_diam/1000))/visc
-            print(reynolds_pipe)
             s = 0.12363*reynolds_pipe*(pipe_eps/pipe_diam) + np.log(0.3984*reynolds_pipe)
             f = np.sqrt(1/( 0.8686*np.log((0.3984*reynolds_pipe)/(0.8686*s)**((s-0.645)/s+0.39))))
             k_pipe = f*(pipe_length/(pipe_diam/1000))
