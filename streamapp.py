@@ -238,6 +238,9 @@ with tab6:
     try:
         intersection = pump_curve.intersection(system_curve)
         ax.scatter(*intersection.xy, label='Duty point', color='orange', zorder=11)
+        col1, col2 = st.columns(2)
+        col1.metric('Duty point Flow', str(np.around(intersection.x, 4)) + ' L/min')
+        col2.metric('Duty point Head', str(np.around(intersection.y, 4)) + ' m')
     except:
         pass
 
@@ -257,9 +260,7 @@ with tab6:
     ax.legend()
     ax.grid()
     st.pyplot(fig)
-    col1, col2 = st.columns(2)
-    col1.metric('Duty point Flow', str(np.around(intersection.x,4)) + ' L/min')
-    col2.metric('Duty point Head', str(np.around(intersection.y,4)) + ' m')
+
 
 
 
