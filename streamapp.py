@@ -216,8 +216,8 @@ with tab6:
 
     total_k = fitting_kvalue
 
-    pumpx = df_pump[pump]['Flow']
-    pumpy = df_pump[pump]['Head']
+    pumpx = df_pump[pump]['Flow'].dropna()
+    pumpy = df_pump[pump]['Head'].dropna()
     sys_x = np.arange(0.1,30,0.5)
     sys_y = system_pressure(np.arange(0.1,30,0.5),total_k,valve_Kv,use_valve, use_darcy) +elev_hl
 
