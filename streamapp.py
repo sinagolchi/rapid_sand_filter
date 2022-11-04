@@ -2,7 +2,22 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import pickle
 from shapely.geometry import LineString
+import datetime
+
+default = {'area': 0.0079, 'total length': 2.5, 'media_l': 1.2, 'media_e': 0.40, 'meadia_rho': 2650, 'Kv': 115, 'Ki': 2.5, 'd': 0.6, 'temp': 15, 'visc': 1.14E-3, 'w_rho': 999, 'grav_bed': False,'grav_media_l': 0.3, 'grav_media_e': 0.45, 'grav_Kv': 115, 'grav_Ki': 2.5,'grav_d': 3, 'Q_set_lpm': 10.0, 'Q_fl_lpm': 10.0}
+
+with st.sidebar:
+    st.header('Project properties')
+    s_pickle = st.file_uploader('Load state from file')
+    if s_pickle is None:
+        st.metric('Current state',value='Default values')
+        param_dict = default
+    else:
+        st.metric('Current state', value='Custom values')
+        param_dict = pickle.load(s_pickle)
+
 
 st.title('Rapid Sand Filter Calculations')
 st.caption('Developed by Sina Golchi for UW NSERC Chair in Water Treatment, 2022')
@@ -12,17 +27,17 @@ tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(['Setup', 'Clean bed head loss' ,'F
 with tab1:
     st.subheader('Sand bed configuration')
     c1,c2,c3 = st.columns(3)
-    area = c1.number_input(label='Base area in [m^2]', value= 0.0079, step=0.0001,format="%.5f")
-    total_length = c2.number_input(label='Total length of bed [m] (overflow position)', value=2.5)
-    media_l = c2.number_input(label='Media depth at rest [m]', value=1.2)
-    media_e = c3.number_input(label='Media porosity (0-1)', value= 0.40)
-    media_rho = c3.number_input(label='Media density [kg/m^3]', value=2650)
-    Kv = c2.number_input(label='Kv value for Ergun equation', value=115)
-    Ki = c2.number_input(label='KI value for Ergun equation', value=2.5)
-    d = c3.number_input(label='Effective size of media [mm]', value=0.6)
-    temp = c1.number_input(label='Temperature [degree C]', value = 15)
-    visc =  c1.number_input(label='Water dynamic viscosity [kg/m.s]',value=1.14E-3,format="%.5f")
-    w_rho = c1.number_input(label='Water density [kg/m^3]', value=999)
+    area = c1.number_input(label='Base area in [m^2]', value= param_dict['area'], step=0.0001,format="%.5f")
+    total_length = c2.number_input(label='Total length of bed [m] (overflow position)', value=param_dict['total length'])
+    media_l = c2.number_input(label='Media depth at rest [m]', value=param_dict['media_l'])
+    media_e = c3.number_input(label='Media porosity (0-1)', value= param_dict['media_e'])
+    media_rho = c3.number_input(label='Media density [kg/m^3]', value= param_dict['meadia_rho'])
+    Kv = c2.number_input(label='Kv value for Ergun equation', value= param_dict['Kv'])
+    Ki = c2.number_input(label='KI value for Ergun equation', value= param_dict['Ki'])
+    d = c3.number_input(label='Effective size of media [mm]', value= param_dict['d'])
+    temp = c1.number_input(label='Temperature [degree C]', value = param_dict['temp'])
+    visc =  c1.number_input(label='Water dynamic viscosity [kg/m.s]',value= param_dict['visc'] , format="%.5f")
+    w_rho = c1.number_input(label='Water density [kg/m^3]', value= param_dict['w_rho'])
 
 
     g = 9.81
@@ -34,18 +49,18 @@ with tab1:
 
     st.markdown("""---""")
     st.subheader('Gravel bed configuration')
-    grav_bed = st.checkbox(label='Account for head loss in gravel bed?')
+    grav_bed = st.checkbox(label='Account for head loss in gravel bed?',value= param_dict['grav_bed'])
     if grav_bed:
         c41, c42 = st.columns(2)
-        grav_media_l = c41.number_input(label='Gravel depth[m]', value=0.3)
-        grav_media_e = c42.number_input(label='Gravel porosity (0-1)', value=0.45)
-        grav_Kv = c41.number_input(label='Gravel Kv value for Ergun equation', value=115)
-        grav_Ki = c42.number_input(label='Gravel KI value for Ergun equation', value=2.5)
-        grav_d = c41.number_input(label='Effective size of Gravel [mm]', value=3)
+        grav_media_l = c41.number_input(label='Gravel depth[m]', value= param_dict['grav_media_l'])
+        grav_media_e = c42.number_input(label='Gravel porosity (0-1)', value= param_dict['grav_media_e'])
+        grav_Kv = c41.number_input(label='Gravel Kv value for Ergun equation', value= param_dict['grav_Kv'])
+        grav_Ki = c42.number_input(label='Gravel KI value for Ergun equation', value= param_dict['grav_Ki'])
+        grav_d = c41.number_input(label='Effective size of Gravel [mm]', value= param_dict['grav_d'])
 
 with tab2:
     c11,c12 = st.columns(2)
-    Q_set_lpm = c11.number_input(label='Flow rate through bed [L/min]', value=10)
+    Q_set_lpm = c11.number_input(label='Flow rate through bed [L/min]', value= param_dict['Q_set_lpm'], step= 0.1)
     v = Q_set_lpm*1.66667e-5/area
     c12.metric('Filtration rate [m/s]',value=np.around(v,5))
     def clean_bed_hlcalc(Kv,Ki,media_e,media_l,d,v):
@@ -106,7 +121,7 @@ with tab3:
 with tab4:
     st.subheader('How much the bed expand by a certain flow rate')
     c11,c12 = st.columns(2)
-    Q_fl_lpm = c11.number_input(label='Flow rate through bed for fluidization [L/min]', value=10.0, step=0.1)
+    Q_fl_lpm = c11.number_input(label='Flow rate through bed for fluidization [L/min]', value= param_dict['Q_fl_lpm'], step=0.1)
     v_fl = Q_fl_lpm*1.66667e-5/area
     c12.metric('Filtration rate [m/s]',value=np.around(v_fl,5))
 
@@ -259,6 +274,12 @@ with tab6:
     ax.legend()
     ax.grid()
     st.pyplot(fig)
+
+with st.sidebar:
+    st.header('Download current state to file')
+    current_sate = {'area': area, 'total length': total_length, 'media_l': media_l, 'media_e': media_e, 'meadia_rho': media_rho, 'Kv': Kv, 'Ki': Ki, 'd':  d, 'temp': temp, 'visc': visc, 'w_rho': w_rho, 'grav_bed': grav_bed,'grav_media_l': grav_media_l if grav_bed else 0.3, 'grav_media_e':grav_media_e if grav_bed else 0.45, 'grav_Kv': grav_Kv if grav_bed else 115, 'grav_Ki': grav_Ki if grav_bed else 2.5,'grav_d': grav_d if grav_bed else 3, 'Q_set_lpm': 10.0, 'Q_fl_lpm': 10.0}
+    s_pickle_c = pickle.dumps(current_sate)
+    st.download_button('Download current state', data=s_pickle_c)
 
 
 
