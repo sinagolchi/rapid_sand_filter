@@ -244,7 +244,7 @@ with tab6:
     #%% calculation for bed expansion
 
 
-    plt.style.use('seaborn-dark')
+    plt.style.use('seaborn-v0_8-darkgrid')
     fig , ax = plt.subplots()
     ax.plot(sys_x, sys_y, label='System curve')
     ax.plot(pumpx,pumpy,label='Pump curve')
